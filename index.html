@@ -1,0 +1,160 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	
+	<title>RankFlow</title>
+	
+	<script type="text/javascript" src="./js/raphael-min.js"></script>
+	<script type="text/javascript" src="./js/jquery-1.7.1.min.js"></script>
+	
+	<script type="text/javascript" src="./md5/js/md5.min.js"></script>
+	
+	<script type="text/javascript" src="./vis.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="main.css" />
+	
+	<script>
+	
+		// md5 implementation from https://github.com/blueimp/JavaScript-MD5
+	
+		var _data = {};
+		var _singlerow;
+		var _limitlabel;
+	
+		function getPaste() {
+			
+			data = {};
+			
+			var _raw = $("#vis_textarea").val();
+			var _makelog = $("#vis_log").is(":checked");
+			_limitlabel = $("#vis_limitlabel").is(":checked");
+			
+			var _rows = _raw.split("\n");
+			
+			var _w = $("#vis_width").val();
+			var _h = $("#vis_height").val();
+			
+			var _labels = {};
+			var _valname = "uservariable";
+			var _it = 2;
+						
+			var _tmpelements = _rows[1].split("\t")
+			_singlerow = (isNaN(parseInt(_tmpelements[1]))) ? true:false;
+			if(_singlerow == true) {
+				_makelog = false;
+				_it = 1;
+			}
+						
+			var _html = '<table>';
+			
+			for(var i = 0; i < _rows.length; i++) {
+				
+				_elements = _rows[i].split("\t");
+				
+				_html += '<tr>';
+				
+				for(var j = 0; j < _elements.length; j = j + _it) {
+					
+					//if(_limitlabel) { _elements[j] = _elements[j].substr(0, 20) + ".."; }
+					
+					if(i == 0) {
+						
+						_data[_elements[j]] = {};
+						_labels[j] = _elements[j];
+						
+						_html += '<th>' + _elements[j] + '</th>';
+						if(!_singlerow) {
+							_html += '<th>' + _elements[j+1] + '</th>';
+						}
+						
+					} else {
+						
+						var _tmp = {};
+						var _tmpvalue = ($("#vis_ranksize").is(":checked")) ? _rows.length-i:1;
+						_tmp[_valname] = (_singlerow) ? _tmpvalue:parseInt(_elements[j+1]);
+						if(_makelog == true) {
+							var _newvalname = "log(uservariable)";
+							_tmp[_newvalname] = Math.round(Math.log(parseInt(_elements[j+1])) * 10);
+						}
+						_data[_labels[j]][_elements[j]] = _tmp;
+						
+						_html += '<td>' + _elements[j] + '</td>';
+						if(!_singlerow) {
+							_html += '<td>' + _elements[j+1] + '</td>';
+						}
+					}
+				}
+				
+				_html += '</tr>';
+			}
+			_html += '</table>';
+			
+			$("#vis_table").html(_html);
+			
+			_pythonout = "";
+			_counter = 1;
+			
+			for(var _day in _data) {
+
+				_pythonout += "list" + _counter + " = [";
+				
+				for(var _vid in _data[_day]) {
+					
+					_pythonout += "'" + md5(_vid) + "',"
+				}
+
+				_pythonout = _pythonout.substring(0,_pythonout.length - 1);
+				_pythonout += "]\n";
+				_counter++; 
+			}
+			
+			$("#pythonout").html(_pythonout);
+			
+			//console.log(_data);
+			var _startval = (_makelog) ? _newvalname:_valname;
+			startVis(_startval,_w,_h);
+		}	
+	
+	</script>
+	
+</head>
+
+<body>
+
+	<h1>RankFlow</h1>
+
+	<p>This is a visualization tool that allows for analyzing changes in ranked and (if desired) valued lists over time. To try it out, download <a href="http://thepoliticsofsystems.net/permafiles/syria_ranks.xlsx">this file</a>
+	and paste the first 15 lines or so from Excel into the textarea below. This file contains the top ranked videos on YouTube for the query "syria" on five consecutive days, as well as the viewcount for each video. Use
+	the logarithm checkbox for better display.</p>
+	
+	<p>You can either use data that is merely a collection of ranked items (tab separated single columns, <a href="http://thepoliticsofsystems.net/permafiles/syria_ranks_noval.xlsx">example</a>)
+	or combinations of items and a value (tab separated list of two columns, <a href="http://thepoliticsofsystems.net/permafiles/syria_ranks.xlsx">example</a>).</p>
+
+	<form id="vis_pastearea" onsubmit="getPaste(); return false;">
+		<p><textarea id="vis_textarea"></textarea></p>
+		<p><input id="vis_log" type="checkbox" /> make uservariable logarithmic for bar height calculation (useful if the differences between smallest and greatest value are very big, ignored in single column mode)</p>
+		<p><input id="vis_ranksize" type="checkbox" /> use inverse rank for bar size in single column mode (ignored in two column mode)</p>
+		<p><input id="vis_limitlabel" type="checkbox" /> shorten labels (if text is too long)</p>
+		<p>width: <input id="vis_width" type="text" value="1200" class="textfield" /> / height: <input id="vis_height" type="text" value="700" class="textfield" /> </p>
+		<p><input type="submit" value="generate visualization" /></p>
+	</form>
+	
+	<p>
+		<form id="vis_interface"></form>
+	</p>
+
+	<p id="visualization"></p>
+	
+	<p id="vis_svg"><input type="button" onclick="encode_as_img_and_link();" value="generate SVG of current visualization" /> <span id="svgdown"></span></p>
+	
+	<p id="vis_table"></p>
+	
+	<p id="pythonout"></p>
+
+</body>
+</html>
+
+                                                            
+                                                            
