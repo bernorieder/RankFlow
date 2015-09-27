@@ -17,6 +17,8 @@
 	
 	<script>
 	
+		// RankFlow visualization, by Bernhard Rieder
+		// RBD calculations based on this python implementation: https://github.com/maslinych/linis-scripts/blob/master/rbo_calc.py
 		// md5 implementation from https://github.com/blueimp/JavaScript-MD5
 	
 		var _data = {};
@@ -27,6 +29,7 @@
 			
 			data = {};
 			
+			// get interface variables and textarea contents
 			var _raw = $("#vis_textarea").val();
 			var _makelog = $("#vis_log").is(":checked");
 			_limitlabel = $("#vis_limitlabel").is(":checked");
@@ -131,7 +134,7 @@
 			console.log(_rbds);
 			
 			
-			// RBD output
+			// RBD table output
 			var _rbdout = '<h2>Rank-Biased Distances</h2><table><tr>';
 			var _counter = 0;
 			for(var _day in _data) {
@@ -171,8 +174,7 @@
 				}).length;
 				overs[i+1] = parseFloat(X_d)
 			}
-			
-			
+				
 			// (1) \sum_{d=1}^l (X_d / d) * p^d
 		    var sum1 = 0
 		    for(var i = 0; i < l; i++) {
