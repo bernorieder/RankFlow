@@ -23,6 +23,7 @@ function startVis(_valname,_w,_h) {
 	_slicecount = 0;
 	_bottomspacing = 5;
 	_topspacing = 15;
+	_rightspacing = 40;
 	_barheights = new Object;
 	_dataarray = new Object;
 	_dataSortSize = new Object;
@@ -53,7 +54,7 @@ function startVis(_valname,_w,_h) {
 	
 	calculateFactors(_valname);
 
-	_barspacing = Math.round((c_width - (_slicecount * _barwidth)) / (_slicecount - 1));              	
+	_barspacing = Math.round((c_width - (_slicecount * _barwidth)) / (_slicecount - 1)) - _rightspacing;              	
 	
 	_slices = new Object;	
 	_lines = new Object;
