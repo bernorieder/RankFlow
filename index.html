@@ -137,13 +137,16 @@
 			// RBD table output
 			var _rbdout = '<h2>Rank-Biased Distances</h2><table><tr>';
 			var _counter = 0;
+			var _avg = 0;
 			for(var _day in _data) {
 				_rbdout += '<th>' + _day + '</th>';
 				if(_counter < _rbds.length) {
 					_rbdout += '<th>&#8594; ' +  _rbds[_counter] + ' &#8594;</th>';
-				}
+					_avg += _rbds[_counter];
+				}				
 				_counter++;
 			}
+			_rbdout += '<th>avg: ' + (_avg / (_counter - 1))  + '</th>';
 			_rbdout += '</tr></table>';
 			$("#vis_rbd").html(_rbdout);
 			
