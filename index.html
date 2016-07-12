@@ -146,7 +146,7 @@
 				}				
 				_counter++;
 			}
-			_rbdout += '<th>avg: ' + (_avg / (_counter - 1))  + '</th>';
+			_rbdout += '<th>avg: ' + (Math.round((_avg / (_counter - 1)) * 100 ) / 100)  + '</th>';
 			_rbdout += '</tr></table>';
 			$("#vis_rbd").html(_rbdout);
 			
