@@ -137,16 +137,20 @@
 			// RBD table output
 			var _rbdout = '<h2>Rank-Biased Distances</h2><table><tr>';
 			var _counter = 0;
-			var _avg = 0;
 			for(var _day in _data) {
 				_rbdout += '<th>' + _day + '</th>';
 				if(_counter < _rbds.length) {
 					_rbdout += '<th>&#8594; ' +  _rbds[_counter] + ' &#8594;</th>';
-					_avg += _rbds[_counter];
+					
 				}				
 				_counter++;
 			}
-			_rbdout += '<th>avg: ' + (Math.round((_avg / (_counter - 1)) * 100 ) / 100)  + '</th>';
+			
+			//_avg = _avg / (_counter - 1);
+			var _avg = domean(_rbds);
+			var _variance = dovariance(_rbds);
+			
+			_rbdout += '<th>avg: ' + (Math.round((_avg) * 100 ) / 100)  + '<br />variance: ' + (Math.round((_variance) * 10000 ) / 10000) + '  </th>';
 			_rbdout += '</tr></table>';
 			$("#vis_rbd").html(_rbdout);
 			
@@ -155,6 +159,26 @@
 		}
 		
 		
+		function domean(_array) {
+			var _avg = 0;
+			for(var _value in _array) {
+				_avg += _array[_value];
+			}
+			_avg = _avg / _array.length;
+			return _avg;
+		}
+		
+		
+		function dovariance(_array) {
+			var _avg = domean(_array);
+			var _values = [];
+			for(var _value in _array) {
+				_values.push(Math.pow(_array[_value] - _avg, 2));
+			}
+			var _variance = domean(_values);
+			return _variance;
+		}
+				
 		
 		function calc_rbo(_list1,_list2,p) {
 			
@@ -218,8 +242,8 @@
 	<p>You can either use data that is merely a collection of ranked items (tab separated single columns, <a href="http://thepoliticsofsystems.net/permafiles/syria_ranks_noval.xlsx">example</a>)
 	or combinations of items and a value (tab separated list of two columns, <a href="http://thepoliticsofsystems.net/permafiles/syria_ranks.xlsx">example</a>).</p>
 	
-	<p>This tool also calculates the Rank-Biased Distance (RBD) metric to quantify changes from one slice to the next. The higher the RBD value, the more change. The "RBD p" parameter (value is between 0 and 1) below allows to determine how
-	"top-weighed" the calculation should be. With a small p, changes at the top of the lists are weighed more strongly, with p at 1 all changes are treated the same. Calculations are based on William Webber, Alistair Moffat, and Justin Zobel (2010)
+	<p>This tool also calculates the Rank-Biased Distance (RBD) metric to quantify changes from one slice to the next. The higher the RBD value, the more change. The "RBD p" parameter (value is between 0.01 and 0.99) below allows to determine how
+	"top-weighed" the calculation should be. With a small p, changes at the top of the lists are weighed more strongly, with p approaching 1 all changes are treated the same. Calculations are based on William Webber, Alistair Moffat, and Justin Zobel (2010)
 	"A similarity measure for indefinite rankings." ACM Transactions on Information Systems 28(4), 20. (<a href="http://dl.acm.org/citation.cfm?id=1852106" target="_blank">ACM library</a> / <a href="http://blog.mobile.codalism.com/research/papers/wmz10_tois.pdf" target="_blank">preprint</a>)</p>
 	
 	<p>The source code of this tool is available <a href="https://github.com/bernorieder/RankFlow" target="_blank">here</a>.</p>
