@@ -54,7 +54,7 @@ function startVis(_valname,_w,_h) {
 	
 	calculateFactors(_valname);
 
-	_barspacing = Math.round((c_width - (_slicecount * _barwidth)) / (_slicecount - 1)) - _rightspacing;              	
+	_barspacing = Math.round((c_width  - _rightspacing) / _slicecount);              	
 	
 	_slices = new Object;	
 	_lines = new Object;
