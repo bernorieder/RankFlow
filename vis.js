@@ -1,4 +1,4 @@
-function startVis(_valname,_w,_h) {
+function startVis(_sizevaluename, _colourvaluename,_w,_h) {
 
 	// variables to modify
 	c_width = parseInt(_w);
@@ -18,8 +18,8 @@ function startVis(_valname,_w,_h) {
 	
 	// do not modify
 	_topalign = false;
-	_colorMetric = _valname;
-	_mainVar = _valname; 	
+	_colorMetric = _colourvaluename;
+	_mainVar = _sizevaluename; 	
 	_slicecount = 0;
 	_bottomspacing = 5;
 	_topspacing = 15;
@@ -47,12 +47,12 @@ function startVis(_valname,_w,_h) {
 	}
 
 
-	createInterface(_valname);
+	createInterface(_mainVar);
 
 	_pf = 0;	// pixelfactor
 	_cf = 0;	// colorfactor
 	
-	calculateFactors(_valname);
+	calculateFactors(_mainVar);
 
 	_barspacing = Math.round((c_width  - _rightspacing) / _slicecount);              	
 	
