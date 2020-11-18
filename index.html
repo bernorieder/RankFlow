@@ -40,17 +40,33 @@
 			var _h = $("#vis_height").val();
 			
 			var _labels = {};
-			var _valname = "uservariable";
-			var _it = 2;
-			
-			var _rbo_p = parseFloat($("#vis_alpha").val());
-						
-			var _tmpelements = _rows[1].split("\t")
-			_singlerow = (isNaN(parseInt(_tmpelements[1]))) ? true:false;
-			if(_singlerow == true) {
+		
+			var _values = 0;			
+			var _tmpelements = _rows[1].split("\t");
+
+			if (isNaN(parseInt(_tmpelements[1]))) {
+				_values = 0;
 				_makelog = false;
-				_it = 1;
+			} else if (isNaN(parseInt(_tmpelements[2]))) {
+				_values = 1;
+			} else {
+				_values = 2;
 			}
+
+			var _it = _values + 1;
+
+			var _valnames = [];
+			if (_values > 0) {
+				var _tmpelements = _rows[0].split("\t")
+				if (_values >= 1) {
+					_valnames [0] = _tmpelements[1];
+				}
+				if (_values >= 2) {
+					_valnames [1] = _tmpelements[2];
+				}
+			}
+
+			var _rbo_p = parseFloat($("#vis_alpha").val());
 			
 			
 			// HTML table output
@@ -70,24 +86,40 @@
 						_labels[j] = _elements[j];
 						
 						_html += '<th>' + _elements[j] + '</th>';
-						if(!_singlerow) {
+						if(_values > 0) {
 							_html += '<th>' + _elements[j+1] + '</th>';
+						}
+						if(_values > 1) {
+							_html += '<th>' + _elements[j+2] + '</th>';
 						}
 						
 					} else {
 						
 						var _tmp = {};
-						var _tmpvalue = ($("#vis_ranksize").is(":checked")) ? _rows.length-i:1;
-						_tmp[_valname] = (_singlerow) ? _tmpvalue:parseInt(_elements[j+1]);
-						if(_makelog == true) {
-							var _newvalname = "log(uservariable)";
-							_tmp[_newvalname] = Math.round(Math.log(parseInt(_elements[j+1])) * 10);
+						if (_values == 0) {
+							_tmp["value"] = ($("#vis_ranksize").is(":checked")) ? _rows.length-i:1;
 						}
+						if (_values > 0) {
+							_tmp[_valnames[0]] = parseInt(_elements[j+1]);
+							if (_makelog == true) {
+								_tmp["log("+ _valnames[0] + ")"] = Math.round(Math.log(parseInt(_elements[j+1])) * 10);
+							}
+						}
+						if (_values > 1) {
+							_tmp[_valnames[1]] = parseInt(_elements[j+2]);
+							if (_makelog == true) {
+								_tmp["log("+ _valnames[1] + ")"] = Math.round(Math.log(parseInt(_elements[j+2])) * 10);
+							}
+						}
+
 						_data[_labels[j]][_elements[j]] = _tmp;
 						
 						_html += '<td>' + _elements[j] + '</td>';
-						if(!_singlerow) {
+						if(_values > 0) {
 							_html += '<td>' + _elements[j+1] + '</td>';
+						}
+						if(_values > 1) {
+							_html += '<td>' + _elements[j+2] + '</td>';
 						}
 					}
 				}
@@ -154,8 +186,8 @@
 			_rbdout += '</tr></table>';
 			$("#vis_rbd").html(_rbdout);
 			
-			var _startval = (_makelog) ? _newvalname:_valname;
-			startVis(_startval,_w,_h);
+			var _startval = (_makelog) ? "log("+ _valnames[0] + ")":_valnames[0];
+			startVis(_startval, _valnames[1],_w,_h);
 		}
 		
 		
@@ -240,7 +272,7 @@
 	the logarithm checkbox for better display.</p>
 	
 	<p>You can either use data that is merely a collection of ranked items (tab separated single columns, <a href="http://thepoliticsofsystems.net/permafiles/syria_ranks_noval.xlsx">example</a>)
-	or combinations of items and a value (tab separated list of two columns, <a href="http://thepoliticsofsystems.net/permafiles/syria_ranks.xlsx">example</a>).</p>
+	or combinations of items and one or two values (tab separated list of two or three columns, <a href="http://thepoliticsofsystems.net/permafiles/syria_ranks.xlsx">example</a>).</p>
 	
 	<p>This tool also calculates the Rank-Biased Distance (RBD) metric to quantify changes from one slice to the next. The higher the RBD value, the more change. The "RBD p" parameter (value is between 0.01 and 0.99) below allows to determine how
 	"top-weighed" the calculation should be. With a small p, changes at the top of the lists are weighed more strongly, with p approaching 1 all changes are treated the same. Calculations are based on William Webber, Alistair Moffat, and Justin Zobel (2010)
