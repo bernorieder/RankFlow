@@ -36,9 +36,6 @@
 
 			_rows = _raw.split("\n");
 
-			console.log("Rows:" + _rows);
-			console.log(_rows.length);
-
 			var _w = $("#vis_width").val();
 			var _h = $("#vis_height").val();
 
@@ -46,11 +43,6 @@
 
 			var _values = 0;
 			var _tmpelements = _rows[1].split("\t");
-
-			console.log("tmpelement: " + _tmpelements)
-			console.log("tmpelement[0]" + _tmpelements[0])
-			console.log("tmpelement[1]" + _tmpelements[1])
-			console.log("tmpelement[2]" + _tmpelements[2])
 
 			if (isNaN(parseInt(_tmpelements[1]))) {
 				_values = 0;
@@ -223,7 +215,7 @@
 
 			var _startval = (_makelog) ? "log(" + _valnames[0] + ")" :
 				_valnames[0];
-			startVis(_startval, _valnames[0], _w, _h);
+			startVis(_startval, _valnames[1], _w, _h);
 		}
 
 

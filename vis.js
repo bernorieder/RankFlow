@@ -15,6 +15,8 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
 	_constrokewidth = "1px";
 	_blostrokecolor = "#000";
 	_blostrokewidth = "1px";
+
+	_custom_colour = true;
  
 	// do not modify
 	_topalign = false;
@@ -283,7 +285,8 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
 	var _tmplowest = 10000000000000000;
  
 	if (_colorMetric == "colour") {
- 
+
+		_custom_colour = true;
 	   tmp_colour = new Object;
  
 	   for (var _slide in _data) {
@@ -301,6 +304,7 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
 	   }
 	   
 	} else {
+		_custom_colour = false;
 	   for (var _slice in _data) {
 		  for (var _word in _data[_slice]) {
 			 var _tmphighest = (parseInt(_data[_slice][_word][_colorMetric]) > _tmphighest) ? _data[_slice][_word][_colorMetric] : _tmphighest;
@@ -327,12 +331,12 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
 			 _lines[_line][i].color(_tmpcol);
 		  }
 	   }
- 
-	   for (var _word in _linescon) {
-		  for (var _con in _linescon[_word]) {
-			 _linescon[_word][_con].color();
-		  }
-	   }
+	}
+
+	for (var _word in _linescon) {
+		for (var _con in _linescon[_word]) {
+			_linescon[_word][_con].color();
+		}
 	}
  }
  
@@ -435,9 +439,15 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
  
 	this.color = function () {
  
-	   _this.line.attr({
-		  fill: "0-" + _this.obj2.concol + "-" + _this.obj1.concol
-	   });
+		if (_custom_colour == true) {
+			console.log("Custom colour: ON");
+			_this.line.attr({fill: _this.obj1.concol});
+		}
+		
+		else {
+			console.log("Custom colour: OFF");
+	   		_this.line.attr({fill: "0-" + _this.obj2.concol + "-" + _this.obj1.concol});
+		}
  
 	   _this.line.node.style.opacity = _lineopacity;
 	}
