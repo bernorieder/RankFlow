@@ -3,46 +3,54 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	
+
 	<title>RankFlow</title>
-	
+
 	<script type="text/javascript" src="./js/raphael-min.js"></script>
 	<script type="text/javascript" src="./js/jquery-1.7.1.min.js"></script>
-	
+
 	<script type="text/javascript" src="./md5/js/md5.min.js"></script>
-	
+
 	<script type="text/javascript" src="./vis.js"></script>
-	
+
 	<link rel="stylesheet" type="text/css" href="main.css" />
-	
+
 	<script>
-	
+
 		// RankFlow visualization, by Bernhard Rieder
 		// RBD calculations based on this python implementation: https://github.com/maslinych/linis-scripts/blob/master/rbo_calc.py
 		// md5 implementation from https://github.com/blueimp/JavaScript-MD5
-	
+
 		var _data = {};
 		var _singlerow;
 		var _limitlabel;
-	
+
 		function getPaste() {
-			
+
 			data = {};
-			
+
 			// get interface variables and textarea contents
 			var _raw = $("#vis_textarea").val();
 			var _makelog = $("#vis_log").is(":checked");
 			_limitlabel = $("#vis_limitlabel").is(":checked");
-			
-			var _rows = _raw.split("\n");
-			
+
+			_rows = _raw.split("\n");
+
+			console.log("Rows:" + _rows);
+			console.log(_rows.length);
+
 			var _w = $("#vis_width").val();
 			var _h = $("#vis_height").val();
-			
+
 			var _labels = {};
-		
-			var _values = 0;			
+
+			var _values = 0;
 			var _tmpelements = _rows[1].split("\t");
+
+			console.log("tmpelement: " + _tmpelements)
+			console.log("tmpelement[0]" + _tmpelements[0])
+			console.log("tmpelement[1]" + _tmpelements[1])
+			console.log("tmpelement[2]" + _tmpelements[2])
 
 			if (isNaN(parseInt(_tmpelements[1]))) {
 				_values = 0;
@@ -53,214 +61,247 @@
 				_values = 2;
 			}
 
-			var _it = _values + 1;
+			var _it = _values + 2;
 
-			var _valnames = [];
+			_valnames = [];
 			if (_values > 0) {
 				var _tmpelements = _rows[0].split("\t")
 				if (_values >= 1) {
-					_valnames [0] = _tmpelements[1];
+					_valnames[0] = _tmpelements[1];
+					_valnames[1] = _tmpelements[2];
 				}
 				if (_values >= 2) {
-					_valnames [1] = _tmpelements[2];
+					_valnames[1] = _tmpelements[2];
+					_valnames[2] = _tmpelements[3];
 				}
 			}
 
+			
+
 			var _rbo_p = parseFloat($("#vis_alpha").val());
-			
-			
+
+
 			// HTML table output
 			var _html = '<h2>Entities Table</h2><table>';
-			
-			for(var i = 0; i < _rows.length; i++) {
-				
+
+			for (var i = 0; i < _rows.length; i++) {
+
 				_elements = _rows[i].split("\t");
-				
+
 				_html += '<tr>';
-				
-				for(var j = 0; j < _elements.length; j = j + _it) {
-										
-					if(i == 0) {
-						
+
+				for (var j = 0; j < _elements.length; j = j + _it) {
+
+					if (i == 0) {
+
 						_data[_elements[j]] = {};
 						_labels[j] = _elements[j];
-						
+
 						_html += '<th>' + _elements[j] + '</th>';
-						if(_values > 0) {
-							_html += '<th>' + _elements[j+1] + '</th>';
-						}
-						if(_values > 1) {
-							_html += '<th>' + _elements[j+2] + '</th>';
-						}
-						
-					} else {
-						
-						var _tmp = {};
-						if (_values == 0) {
-							_tmp["value"] = ($("#vis_ranksize").is(":checked")) ? _rows.length-i:1;
-						}
+
 						if (_values > 0) {
-							_tmp[_valnames[0]] = parseInt(_elements[j+1]);
-							if (_makelog == true) {
-								_tmp["log("+ _valnames[0] + ")"] = Math.round(Math.log(parseInt(_elements[j+1])) * 10);
-							}
+							_html += '<th>' + _elements[j + 1] + '</th>';
 						}
+
 						if (_values > 1) {
-							_tmp[_valnames[1]] = parseInt(_elements[j+2]);
+							_html += '<th>' + _elements[j + 2] + '</th>';
+						}
+
+					} else {
+
+						_tmp = {};
+
+						if (_values == 0) {
+							
+							_tmp["value"] = ($("#vis_ranksize").is(
+								":checked")) ? _rows.length - i : 1;
+
+						}
+
+						if (_values > 0) {
+
+							_tmp[_valnames[0]] = parseInt(_elements[j + 1]);
+
 							if (_makelog == true) {
-								_tmp["log("+ _valnames[1] + ")"] = Math.round(Math.log(parseInt(_elements[j+2])) * 10);
+								_tmp["log(" + _valnames[0] + ")"] = Math
+									.round(Math.log(parseInt(_elements[j +
+										1])) * 10);
 							}
+
+							_tmp[_valnames[1]] = _elements[j + 2]
+						}
+
+						if (_values > 1) {
+
+							_tmp[_valnames[1]] = parseInt(_elements[j + 2]);
+
+							if (_makelog == true) {
+								_tmp["log(" + _valnames[1] + ")"] = Math
+									.round(Math.log(parseInt(_elements[j +
+										2])) * 10);
+							}
+
+							_tmp[_valnames[2]] = _elements[j + 3];
+
 						}
 
 						_data[_labels[j]][_elements[j]] = _tmp;
-						
+
 						_html += '<td>' + _elements[j] + '</td>';
-						if(_values > 0) {
-							_html += '<td>' + _elements[j+1] + '</td>';
+						if (_values > 0) {
+							_html += '<td>' + _elements[j + 1] + '</td>';
 						}
-						if(_values > 1) {
-							_html += '<td>' + _elements[j+2] + '</td>';
+						if (_values > 1) {
+							_html += '<td>' + _elements[j + 2] + '</td>';
 						}
 					}
 				}
-				
+
 				_html += '</tr>';
 			}
 			_html += '</table>';
-			
+
 			$("#vis_table").html(_html);
-			
-			
+
+
 			// RBO/RBD preps
 			var _pythonout = "";
 			var _counter = 1;
 			var _rbolists = [];
-			
-			for(var _day in _data) {
+
+			for (var _day in _data) {
 
 				_pythonout += "list" + _counter + " = [";
-				
+
 				var _tmplist = []
-				for(var _vid in _data[_day]) {
-					
+				for (var _vid in _data[_day]) {
+
 					_pythonout += "'" + md5(_vid) + "',";
 					_tmplist.push(md5(_vid));
 				}
 
-				_pythonout = _pythonout.substring(0,_pythonout.length - 1);
+				_pythonout = _pythonout.substring(0, _pythonout.length - 1);
 				_pythonout += "]\n";
 				_counter++;
-				
+
 				_rbolists.push(_tmplist)
 			}
-			
+
 			$("#pythonout").html(_pythonout);
-			
+
 
 			// calculate RBDs
 			var _rbds = []
-			for(var i = 0; i < _rbolists.length - 1; i++) {
-				_rbds.push(Math.round((1 - calc_rbo(_rbolists[i],_rbolists[i+1],_rbo_p)) * 1000 ) / 1000);
+			for (var i = 0; i < _rbolists.length - 1; i++) {
+				_rbds.push(Math.round((1 - calc_rbo(_rbolists[i], _rbolists[
+					i + 1], _rbo_p)) * 1000) / 1000);
 			}
-			
+
 			console.log(_rbds);
-			
-			
+
+
 			// RBD table output
 			var _rbdout = '<h2>Rank-Biased Distances</h2><table><tr>';
 			var _counter = 0;
-			for(var _day in _data) {
+			for (var _day in _data) {
 				_rbdout += '<th>' + _day + '</th>';
-				if(_counter < _rbds.length) {
-					_rbdout += '<th>&#8594; ' +  _rbds[_counter] + ' &#8594;</th>';
-					
-				}				
+				if (_counter < _rbds.length) {
+					_rbdout += '<th>&#8594; ' + _rbds[_counter] +
+						' &#8594;</th>';
+
+				}
 				_counter++;
 			}
-			
+
 			//_avg = _avg / (_counter - 1);
 			var _avg = domean(_rbds);
 			var _variance = dovariance(_rbds);
-			
-			_rbdout += '<th>avg: ' + (Math.round((_avg) * 100 ) / 100)  + '<br />variance: ' + (Math.round((_variance) * 10000 ) / 10000) + '  </th>';
+
+			_rbdout += '<th>avg: ' + (Math.round((_avg) * 100) / 100) +
+				'<br />variance: ' + (Math.round((_variance) * 10000) /
+				10000) + '  </th>';
 			_rbdout += '</tr></table>';
 			$("#vis_rbd").html(_rbdout);
-			
-			var _startval = (_makelog) ? "log("+ _valnames[0] + ")":_valnames[0];
-			startVis(_startval, _valnames[1],_w,_h);
+
+			var _startval = (_makelog) ? "log(" + _valnames[0] + ")" :
+				_valnames[0];
+			startVis(_startval, _valnames[1], _w, _h);
 		}
-		
-		
+
+
 		function domean(_array) {
 			var _avg = 0;
-			for(var _value in _array) {
+			for (var _value in _array) {
 				_avg += _array[_value];
 			}
 			_avg = _avg / _array.length;
 			return _avg;
 		}
-		
-		
+
+
 		function dovariance(_array) {
 			var _avg = domean(_array);
 			var _values = [];
-			for(var _value in _array) {
+			for (var _value in _array) {
 				_values.push(Math.pow(_array[_value] - _avg, 2));
 			}
 			var _variance = domean(_values);
 			return _variance;
 		}
-				
-		
-		function calc_rbo(_list1,_list2,p) {
-			
-			var _tmplists = [[_list1.length,_list1],[_list2.length,_list2]].sort()
+
+
+		function calc_rbo(_list1, _list2, p) {
+
+			var _tmplists = [
+				[_list1.length, _list1],
+				[_list2.length, _list2]
+			].sort()
 			var s = _tmplists[0][0]
 			var S = _tmplists[0][1]
 			var l = _tmplists[1][0]
 			var L = _tmplists[1][1]
-			
+
 			var ss = []
 			var ls = []
 			var overs = {}
-			for(var i = 0; i < l; i++) {
+			for (var i = 0; i < l; i++) {
 				ls.push(L[i])
-				if(i<s) {
+				if (i < s) {
 					ss.push(S[i])
 				}
 				X_d = ss.filter(function(n) {
 					return ls.indexOf(n) != -1
 				}).length;
-				overs[i+1] = parseFloat(X_d)
+				overs[i + 1] = parseFloat(X_d)
 			}
-				
+
 			// (1) \sum_{d=1}^l (X_d / d) * p^d
-		    var sum1 = 0
-		    for(var i = 0; i < l; i++) {
-			    d = i + 1 
-			    sum1 += overs[d] / d * Math.pow(p,d)
-		    }
-		    var X_s = overs[s]
-		    var X_l = overs[l]
-	
+			var sum1 = 0
+			for (var i = 0; i < l; i++) {
+				d = i + 1
+				sum1 += overs[d] / d * Math.pow(p, d)
+			}
+			var X_s = overs[s]
+			var X_l = overs[l]
+
 			// (2) \sum_{d=s+1}^l [(X_s (d - s)) / (sd)] * p^d
 			var sum2 = 0
-			for(var i = s; i < l; i++) {
+			for (var i = s; i < l; i++) {
 				d = i + 1
-				sum2 += (X_s * (d-s) / (s*d)) * Math.pow(p,d)
+				sum2 += (X_s * (d - s) / (s * d)) * Math.pow(p, d)
 			}
-		    
+
 			// (3) [(X_l - X_s) / l + X_s / s] * p^l
-		   	var sum3 = ((X_l - X_s) / l + X_s / s) * Math.pow(p,l)
-		   	
-		   	// Equation 32
-		   	var rbo_ext = (1 - p) / p * (sum1 + sum2) + sum3
-		   	return rbo_ext
+			var sum3 = ((X_l - X_s) / l + X_s / s) * Math.pow(p, l)
+
+			// Equation 32
+			var rbo_ext = (1 - p) / p * (sum1 + sum2) + sum3
+			return rbo_ext
 		}
 
-	
+
 	</script>
-	
+
 </head>
 
 <body>
@@ -270,14 +311,14 @@
 	<p>This is a visualization tool that allows for analyzing changes in ranked and (if desired) valued lists over time. To try it out, download <a href="http://thepoliticsofsystems.net/permafiles/syria_ranks.xlsx">this file</a>
 	and paste the first 15 row or so (including the first row) from Excel into the textarea below. This file contains the top ranked videos on YouTube for the query "syria" on five consecutive days, as well as the viewcount for each video. Use
 	the logarithm checkbox for better display.</p>
-	
+
 	<p>You can either use data that is merely a collection of ranked items (tab separated single columns, <a href="http://thepoliticsofsystems.net/permafiles/syria_ranks_noval.xlsx">example</a>)
 	or combinations of items and one or two values (tab separated list of two or three columns, <a href="http://thepoliticsofsystems.net/permafiles/syria_ranks.xlsx">example</a>).</p>
-	
+
 	<p>This tool also calculates the Rank-Biased Distance (RBD) metric to quantify changes from one slice to the next. The higher the RBD value, the more change. The "RBD p" parameter (value is between 0.01 and 0.99) below allows to determine how
 	"top-weighed" the calculation should be. With a small p, changes at the top of the lists are weighed more strongly, with p approaching 1 all changes are treated the same. Calculations are based on William Webber, Alistair Moffat, and Justin Zobel (2010)
 	"A similarity measure for indefinite rankings." ACM Transactions on Information Systems 28(4), 20. (<a href="http://dl.acm.org/citation.cfm?id=1852106" target="_blank">ACM library</a> / <a href="http://blog.mobile.codalism.com/research/papers/wmz10_tois.pdf" target="_blank">preprint</a>)</p>
-	
+
 	<p>The source code of this tool is available <a href="https://github.com/bernorieder/RankFlow" target="_blank">here</a>.</p>
 
 	<form id="vis_pastearea" onsubmit="getPaste(); return false;">
@@ -289,23 +330,20 @@
 		<p>RBD p: <input id="vis_alpha" type="text" value="0.8" class="textfield" /> </p>
 		<p><input type="submit" value="generate visualization" /></p>
 	</form>
-	
+
 	<p>
 		<form id="vis_interface"></form>
 	</p>
 
 	<p id="visualization"></p>
-	
+
 	<p id="vis_svg"><input type="button" onclick="encode_as_img_and_link();" value="generate SVG of current visualization" /> <span id="svgdown"></span></p>
-	
+
 	<p id="vis_rbd"></p>
-	
+
 	<p id="vis_table"></p>
-	
+
 	<p id="pythonout"></p>
 
 </body>
 </html>
-
-                                                            
-                                                            
