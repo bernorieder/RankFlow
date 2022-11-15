@@ -109,7 +109,7 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
 	}
  
  
-	var _ihtml = 'Color coding: <select onchange=\'colorcode(this.options[this.selectedIndex].value);\' name=\'vis_colorcoding\'>';
+	var _ihtml = "Color coding: <select onchange='colorcode(this.options[this.selectedIndex].value);' name='vis_colorcoding'>";
 	var _exit = false;
  
 	dance:
@@ -160,7 +160,7 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
 		  }
 	   }
 	}
-	console.log(c_height);
+	// console.log(c_height);
  }
  
  
@@ -193,7 +193,7 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
  
  function drawvis(_data) {
  
-	console.log(_data)
+	// console.log(_data)
  
 	var i = 0;
 	var _wordlisthtml = "";
@@ -277,7 +277,7 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
  
 	_colorMetric = _sel;
  
-	console.log(_sel);
+	// console.log(_sel);
  
 	var _tmphighest = 0;
 	var _tmplowest = 10000000000000000;
@@ -314,7 +314,13 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
 	   for (var _line in _lines) {
 		  for (var i = 0; i < _lines[_line].length; i++) {
  
-			 var _tmpcol = "rgb(" + (Math.round(_lines[_line][i].values[_colorMetric] / _cf * 2)) + "," + (Math.round(200 - (_lines[_line][i].values[_colorMetric] / _cf * 2))) + "," + (Math.round(255 - (_lines[_line][i].values[_colorMetric] / _cf * 2))) + ")";
+			 var _tmpcol = "rgb(" + 
+				(Math.round(_lines[_line][i].values[_colorMetric] / _cf * 2)) + 
+				"," + 
+				(Math.round(200 - (_lines[_line][i].values[_colorMetric] / _cf * 2))) + 
+				"," + 
+				(Math.round(255 - (_lines[_line][i].values[_colorMetric] / _cf * 2))) + 
+				")";
  
 			 //console.log(_lines[_line][i].values[_colorMetric] + " " + _tmpcol);
 			 _lines[_line][i].concol = _tmpcol;
