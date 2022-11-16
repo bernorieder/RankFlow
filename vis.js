@@ -86,7 +86,6 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
 	   for (var _word in _data[_slice]) {
 		  _barheights[_slice] += _data[_slice][_word][_valname];
 		  var _tmphash = new Array(_word, _data[_slice][_word]);
-		  //console.log(_tmphash);
 		  _dataarray[_slice].push(_tmphash);
 		  _highestel = (_data[_slice][_word][_valname] > _highestel) ? _data[_slice][_word][_valname] : _highestel;
 		  _lowestel = (_data[_slice][_word][_valname] < _lowestel) ? _data[_slice][_word][_valname] : _lowestel;
@@ -195,8 +194,6 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
  
  function drawvis(_data) {
  
-	// console.log(_data)
- 
 	var i = 0;
 	var _wordlisthtml = "";
  
@@ -255,8 +252,6 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
  
 	$("#wordlist").html(_wordlisthtml);
  
-	//console.log(_lines);
- 
 	for (var _word in _lines) {
  
 	   if (typeof (_linescon[_word]) == "undefined") {
@@ -278,8 +273,6 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
  function colorcode(_sel) {
  
 	_colorMetric = _sel;
- 
-	// console.log(_sel);
  
 	var _tmphighest = 0;
 	var _tmplowest = 10000000000000000;
