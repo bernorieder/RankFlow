@@ -276,7 +276,7 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
  
 	var _tmphighest = 0;
 	var _tmplowest = 10000000000000000;
-	
+
 	if (/colour/i.test(_colorMetric)) {
 
 		_custom_colour = true;
@@ -284,7 +284,7 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
  
 	   for (var _slide in _data) {
 		  for (var _entity in _data[_slide]) {
-			 tmp_colour[_entity] = _data[_slide][_entity]["colour"];
+			 tmp_colour[_entity] = _data[_slide][_entity]["colour"] || _data[_slide][_entity]["Colour"];
 		  }
  
 	   }
