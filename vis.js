@@ -276,8 +276,8 @@ function startVis(_sizevaluename, _colourvaluename, _w, _h) {
  
 	var _tmphighest = 0;
 	var _tmplowest = 10000000000000000;
- 
-	if (_colorMetric == "colour") {
+	
+	if (/colour/i.test(_colorMetric)) {
 
 		_custom_colour = true;
 	   tmp_colour = new Object;
